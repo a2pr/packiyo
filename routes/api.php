@@ -1,5 +1,6 @@
 <?php
 
+use App\api\Responses\OrderRetrieveResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('hi', function (){
-   return response()->json('hi');
+    $orderResponse =new OrderRetrieveResponse(1,[],1);
+   return response()->json($orderResponse);
 });

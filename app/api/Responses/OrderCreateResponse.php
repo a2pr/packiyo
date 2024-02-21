@@ -2,15 +2,25 @@
 
 namespace App\api\Responses;
 
+use App\api\Responses\Objects\OrderResponse;
+
 class OrderCreateResponse extends AbstractResponse
 {
-    public bool $operation_status;
     public OrderResponse $order;
 
-    public function __construct(bool $operation_status, OrderResponse $order)
+    public function __construct(OrderResponse $order)
     {
-        $this->operation_status = $operation_status;
         $this->order = $order;
     }
 
+
+    public function getData(): array
+    {
+        return $this->order->getAsRelation();
+    }
+
+    public function getIncluded(): array
+    {
+        return $this->order->getAsIncluded();
+    }
 }
