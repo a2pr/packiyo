@@ -14,6 +14,11 @@ class Order extends Model
     const PENDING_STATUS = 0;
     const READY_TO_SHIP_STATUS = 1;
 
+    const STATUS_ENUMS = [
+        self::PENDING_STATUS => 'pending',
+        self::READY_TO_SHIP_STATUS => 'ready_to_ship',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
