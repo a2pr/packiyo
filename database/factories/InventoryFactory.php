@@ -16,8 +16,10 @@ class InventoryFactory extends Factory
      */
     public function definition(): array
     {
+        $number = rand(5,100);
         return [
-            //
+            'inventory'=>$number,
+            'available_inventory'=>$number,
         ];
     }
 }

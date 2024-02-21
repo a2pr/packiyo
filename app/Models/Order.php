@@ -11,6 +11,9 @@ class Order extends Model
 {
     use HasFactory;
 
+    const PENDING_STATUS = 0;
+    const READY_TO_SHIP_STATUS = 1;
+
     /**
      * The attributes that are mass assignable.
      *
