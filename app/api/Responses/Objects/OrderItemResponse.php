@@ -22,7 +22,7 @@ class OrderItemResponse implements InterfaceResponse
         $this->updated = $updated;
     }
 
-    public function getAsData():array
+    public function getAsData(): array
     {
         $attributes = [
             "quantity" => $this->quantity,
@@ -37,6 +37,7 @@ class OrderItemResponse implements InterfaceResponse
             $this->product->getAsRelation()
         );
     }
+
     public function getAsIncluded(): array
     {
         return ResponseBuilder::buildRelationships(
@@ -60,6 +61,18 @@ class OrderItemResponse implements InterfaceResponse
             $this->id,
             $attributes,
             $this->product->getAsRelation()
+        );
+    }
+
+    public static function createFromModel($model): self
+    {
+        $productResponse = ProductResponse::createFromModel($model->products()->first());
+        return new self(
+            $model->id,
+            $productResponse,
+            $model->quantity,
+            $model->created_at,
+            $model->updated_at,
         );
     }
 }

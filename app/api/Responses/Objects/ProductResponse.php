@@ -68,4 +68,17 @@ class ProductResponse implements InterfaceResponse
             $this->customer->getAsRelation()
         );
     }
+
+    public static function createFromModel($model): self
+    {
+        $customer = CustomerResponse::createFromModel($model->customer()->first());
+        return new self(
+            $model->id,
+            $customer,
+            $model->name,
+            $model->description,
+            $model->created_at,
+            $model->updated_at,
+        );
+    }
 }

@@ -87,4 +87,22 @@ class OrderResponse implements InterfaceResponse
             $relationships
         );
     }
+
+
+    public static function createFromModel($model): self
+    {
+        $customer = CustomerResponse::createFromModel($model->customer()->first());
+        $orderItems = [];
+        foreach($model->orderItems()->get() as $element){
+            $orderItems[] = OrderItemResponse::createFromModel($element);
+        }
+        return new self(
+            $model->id,
+            $customer,
+            $orderItems,
+            $model->status,
+            $model->created_at,
+            $model->updated_at,
+        );
+    }
 }
