@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\api\Responses\ErrorResponse;
 use App\api\Responses\Objects\OrderResponse;
 use App\api\Responses\OrderCreateResponse;
 use App\Models\Customer;
@@ -33,46 +34,60 @@ class OrderController extends Controller
         ]);
 
         $data = $request->all();
+        $statusCode = ResponseAlias::HTTP_OK;
+        try {
+            $customer = Customer::find($data['customer_id']);
 
-        $customer = Customer::find($data['customer_id']);
-
-        if(empty($customer)){
-            //error
-        }
-
-        //create order
-        $order = new Order();
-        $order->status = Order::PENDING_STATUS;
-        $order->customer_id = $data['customer_id'];
-        $order->save();
-
-        //create order items
-        $orderItems = [];
-        foreach ($data['products'] as $element){
-
-            $product = Product::find($element['id']);
-            if(empty($product)){
-                //error
+            if (empty($customer)) {
+                throw new \Exception(
+                    "Customer not found",
+                    ResponseAlias::HTTP_BAD_REQUEST
+                );
             }
 
-            $orderItem = new OrderItem();
-            $orderItem->quantity = $element['quantity'];
-            $orderItem->product_id = $element['id'];
-            $orderItems[] = $orderItem;
+            //create order
+            $order = new Order();
+            $order->status = Order::PENDING_STATUS;
+            $order->customer_id = $data['customer_id'];
+            $order->save();
+
+            //create order items
+            $orderItems = [];
+            foreach ($data['products'] as $element) {
+
+                $product = Product::find($element['id']);
+                if (empty($product)) {
+                    throw new \Exception(
+                        "Product not found",
+                        ResponseAlias::HTTP_BAD_REQUEST
+                    );
+                }
+
+                $orderItem = new OrderItem();
+                $orderItem->quantity = $element['quantity'];
+                $orderItem->product_id = $element['id'];
+                $orderItems[] = $orderItem;
+            }
+
+            $order->orderItems()->saveMany($orderItems);
+
+            $order->load('orderItems');
+            //event Transaction
+
+            $orderResponse = new OrderCreateResponse(OrderResponse::createFromModel($order));
+
+        } catch (\Exception $e) {
+            $statusCode = $e->getCode();
+            $orderResponse = new ErrorResponse(
+                $e->getCode(),
+                $e
+            );
         }
-
-        $order->orderItems()->saveMany($orderItems);
-
-        $order->load('orderItems');
-        //event Transaction
-
-        $orderResponse = new OrderCreateResponse(OrderResponse::createFromModel($order));
-
         $headers = [
             'Content-Type' => 'application/vnd.api+json'
         ];
 
-        return response()->json($orderResponse, ResponseAlias::HTTP_OK, $headers);
+        return response()->json($orderResponse, $statusCode, $headers);
     }
 
     /**

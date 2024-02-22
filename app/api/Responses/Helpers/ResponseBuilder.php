@@ -62,6 +62,20 @@ class ResponseBuilder
         }
 
         return $result;
+    }
 
+    public static function buildError(
+        int $status,
+        string $location,
+        string $title,
+        string $message,
+    ): array
+    {
+        return [
+            'status' => $status,
+            'source' => ['pointer' => $location],
+            'title' => $title,
+            'detail' => $message,
+        ];
     }
 }
