@@ -6,6 +6,7 @@ use App\api\Responses\Objects\CustomerResponse;
 use App\api\Responses\Objects\OrderItemResponse;
 use App\api\Responses\Objects\OrderResponse;
 use App\api\Responses\Objects\ProductResponse;
+use App\api\Responses\OrderRetrieveResponse;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -55,8 +56,8 @@ class ResponseObjectTest extends TestCase
         ]);
 
         $orderItemCreated = OrderItem::factory(1)->create([
-            'order_id'=> $order->first()->id,
-            'product_id'=> $product->first()->id,
+            'order_id' => $order->first()->id,
+            'product_id' => $product->first()->id,
             'quantity' => 1
         ]);
 
@@ -85,8 +86,8 @@ class ResponseObjectTest extends TestCase
         ]);
 
         $orderItem = OrderItem::factory(1)->create([
-            'order_id'=> $order->first()->id,
-            'product_id'=> $product->first()->id,
+            'order_id' => $order->first()->id,
+            'product_id' => $product->first()->id,
             'quantity' => 1
         ]);
 
@@ -101,6 +102,82 @@ class ResponseObjectTest extends TestCase
         Customer::destroy([$customer->first()->id]);
         OrderItem::destroy([$orderItem->first()->id]);
         Order::destroy([$order->first()->id]);
+    }
+
+    public function testOrderRetrieveResponse()
+    {
+        $customer = Customer::factory(1)->create();
+        $product = Product::factory(1)->create([
+            'customer_id' => $customer->first()->id
+        ]);
+
+        $order = Order::factory(1)->create([
+            'customer_id' => $customer->first()->id
+        ]);
+
+        $orderItem = OrderItem::factory(1)->create([
+            'order_id' => $order->first()->id,
+            'product_id' => $product->first()->id,
+            'quantity' => 1
+        ]);
+
+        $OrderResponse = OrderResponse::createFromModel($order->first());
+        $orderRetrieveResponse = new OrderRetrieveResponse($OrderResponse);
+
+        var_dump(json_encode($orderRetrieveResponse));
+        $this->assertIsString(json_encode($orderRetrieveResponse));
+
+        Product::destroy([$product->first()->id]);
+        Customer::destroy([$customer->first()->id]);
+        OrderItem::destroy([$orderItem->first()->id]);
+        Order::destroy([$order->first()->id]);
+    }
+
+    public function testOrdersRetrieveResponse()
+    {
+        $customer = Customer::factory(1)->create();
+        $product = Product::factory(1)->create([
+            'customer_id' => $customer->first()->id
+        ]);
+
+        $order = Order::factory(1)->create([
+            'customer_id' => $customer->first()->id
+        ]);
+
+        $orderItem = OrderItem::factory(1)->create([
+            'order_id' => $order->first()->id,
+            'product_id' => $product->first()->id,
+            'quantity' => 1
+        ]);
+
+        $OrderResponse = OrderResponse::createFromModel($order->first());
+        $orderRetrieveResponse = new OrderRetrieveResponse($OrderResponse);
+
+        $customer2 = Customer::factory(1)->create();
+        $product2 = Product::factory(1)->create([
+            'customer_id' => $customer2->first()->id
+        ]);
+
+        $order2 = Order::factory(1)->create([
+            'customer_id' => $customer2->first()->id
+        ]);
+
+        $orderItem2 = OrderItem::factory(1)->create([
+            'order_id' => $order2->first()->id,
+            'product_id' => $product2->first()->id,
+            'quantity' => 1
+        ]);
+
+        $OrderResponse2 = OrderResponse::createFromModel($order2->first());
+        $orderRetrieveResponse2 = new OrderRetrieveResponse($OrderResponse2);
+
+        $this->assertIsString(json_encode($orderRetrieveResponse));
+        $this->assertIsString(json_encode($orderRetrieveResponse2));
+
+        Product::destroy([$product->first()->id, $product2->first()->id]);
+        Customer::destroy([$customer->first()->id, $customer2->first()->id]);
+        OrderItem::destroy([$orderItem->first()->id, $orderItem2->first()->id]);
+        Order::destroy([$order->first()->id, $order2->first()->id]);
     }
 
     private function log($param): void

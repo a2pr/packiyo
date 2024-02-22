@@ -20,7 +20,7 @@ class OrderResponse implements InterfaceResponse
         $this->order_id = $order_id;
         $this->customer = $customer;
         $this->order_items = $order_items;
-        $this->status = $status;
+        $this->status = Order::STATUS_ENUMS[$status];
         $this->created = $created;
         $this->updated = $updated;
     }
