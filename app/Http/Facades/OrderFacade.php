@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class OrderFacade
@@ -27,7 +28,7 @@ class OrderFacade
         $statusCode = ResponseAlias::HTTP_OK;
         try {
 
-            $data = $this->groupProductDetailsInRequest($data);
+            $data['products'] = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
 
             if (empty($customer)) {
@@ -76,6 +77,7 @@ class OrderFacade
             $orderResponse = new OrderCreateResponse(OrderResponse::createFromModel($order));
 
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             $statusCode = $e->getCode();
             $orderResponse = new ErrorResponse(
                 $e->getCode(),
