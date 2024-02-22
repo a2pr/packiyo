@@ -26,3 +26,5 @@ Route::get('hi', function () {
 });
 
 Route::post('create-order', [OrderController::class, 'store'])->name('order.store');
+Route::get('retrieve-order', [OrderController::class, 'index'])->name('order.index');
+Route::get('retrieve-order/{order}', [OrderController::class, 'show'])->name('order.show');

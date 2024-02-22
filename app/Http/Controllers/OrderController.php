@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\api\Responses\ErrorResponse;
 use App\api\Responses\Objects\OrderResponse;
 use App\api\Responses\OrderCreateResponse;
+use App\api\Responses\OrderRetrieveResponse;
+use App\api\Responses\OrdersRetrieveResponse;
 use App\DataTransferObject\OrderInventoryDto;
 use App\Events\OrderEvent;
 use App\Http\Facades\OrderFacade;
@@ -23,7 +25,20 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::all();
+
+        $orderResponses = [];
+
+        foreach ($orders as $order) {
+            $orderResponses[] = OrderResponse::createFromModel($order);
+        }
+
+        $ordersRetrieveResponse = new OrdersRetrieveResponse($orderResponses);
+        $headers = [
+            'Content-Type' => 'application/vnd.api+json'
+        ];
+
+        return response()->json($ordersRetrieveResponse, ResponseAlias::HTTP_OK, $headers);
     }
 
     /**
@@ -33,7 +48,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'customer_id' => 'required',
-            'products' => 'required'
+            'products' => 'required|array'
         ]);
 
         $data = $request->all();
@@ -51,9 +66,15 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Order $order)
     {
-        //
+        $orderResponse = new OrderRetrieveResponse(OrderResponse::createFromModel($order));
+
+        $headers = [
+            'Content-Type' => 'application/vnd.api+json'
+        ];
+
+        return response()->json($orderResponse, ResponseAlias::HTTP_OK, $headers);
     }
 
     /**
