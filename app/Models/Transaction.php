@@ -15,7 +15,7 @@ class Transaction extends Model
      *
      * @var array
      */
-    protected $fillable = ['quantity_request', 'available_inventory','updated_available_inventory'];
+    protected $fillable = ['quantity_request', 'available_inventory','updated_available_inventory','status_operation'];
 
     public function orderItem(): BelongsTo
     {
