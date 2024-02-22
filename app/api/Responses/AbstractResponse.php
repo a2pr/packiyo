@@ -9,10 +9,16 @@ class AbstractResponse implements \JsonSerializable
 
     public function jsonSerialize(): mixed
     {
-        return [
+        $result = [
             'data' => $this->getData(),
-            'included' => $this->getIncluded(),
         ];
+
+        $included = $this->getIncluded();
+        if($included){
+            $result['included']  = $this->getIncluded();
+        }
+
+        return $result;
     }
 
     public function getData(): array

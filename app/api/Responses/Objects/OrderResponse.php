@@ -4,41 +4,49 @@ namespace App\api\Responses\Objects;
 
 use App\api\Responses\Helpers\ResponseBuilder;
 use App\Models\Order;
+use Illuminate\Database\Eloquent\Model;
 
-class OrderResponse implements InterfaceResponse
+class OrderResponse extends AbstractResponse implements InterfaceResponse
 {
+    const INCLUDE_OPTIONS = [self::CUSTOMER_INCLUDED, self::ITEMS_INCLUDED];
     const TYPE = 'orders';
     public int $order_id;
-    public CustomerResponse $customer;
-    public array $order_items;
+    public ?CustomerResponse $customer;
+    public array $order_items = [];
     public string $status = Order::STATUS_ENUMS[Order::PENDING_STATUS];
-    public string $created;
-    public string $updated;
 
-    public function __construct(int $order_id, CustomerResponse $customer, array $order_items, string $status, string $created, string $updated)
+    public function __construct(int $order_id, ?CustomerResponse $customer, array $order_items, string $status, string $created, string $updated, array $includedParams = [])
     {
         $this->order_id = $order_id;
         $this->customer = $customer;
         $this->order_items = $order_items;
-        $this->status = Order::STATUS_ENUMS[$status];
+        $this->status = $status;
         $this->created = $created;
         $this->updated = $updated;
+        $this->includedParams = $includedParams;
     }
+
 
     public function getAsData(): array
     {
         $relationships = [];
-        foreach ($this->order_items as $element) {
-            $relationships[] = $element->getAsRelation();
-        }
+        if (!empty($this->order_items)) {
+            foreach ($this->order_items as $element) {
+                $relationships[] = $element->getAsRelation();
+            }
 
-        $relationships[] = $this->customer->getAsRelation();
+            $relationships[] = empty($this->customer) ? [] : $this->customer->getAsRelation();
+        }
 
         $attributes = [
             'status' => $this->status,
             'created' => $this->created,
             'updated' => $this->updated,
         ];
+
+        $relationships = array_filter($relationships, function ($subArray) {
+            return !empty($subArray);
+        });
 
         return ResponseBuilder::buildData(
             self::TYPE,
@@ -50,35 +58,42 @@ class OrderResponse implements InterfaceResponse
 
     public function getAsIncluded(): array
     {
-        $relationships = [];
-        foreach ($this->order_items as $element) {
-            $relationships[] = $element->getAsRelation();
+        if (!$this->hasIncludedParams()) {
+            return [];
         }
 
-        $relationships[] = $this->customer->getAsRelation();
+        $included = [];
 
-        $attributes = [
-            'status' => $this->status,
-            'created' => $this->created,
-            'updated' => $this->updated,
-        ];
+        if ($this->elementIsInIncludedParams(self::ITEMS_INCLUDED)) {
+            foreach ($this->order_items as $element) {
+                $included[] = $element->getAsIncluded();
+            }
+        }
 
-        return ResponseBuilder::buildIncluded(
-            self::TYPE,
-            $this->order_id,
-            $attributes,
-            $relationships
-        );
+        if ($this->elementIsInIncludedParams(self::CUSTOMER_INCLUDED)) {
+            $included[] = $this->customer->getAsIncluded();
+        }
+
+        return $included;
     }
 
     public function getAsRelation(): array
     {
-        $relationships = [];
-        foreach ($this->order_items as $orderItem) {
-            $relationships[] = $orderItem->getAsRelation();
+        if (!$this->hasIncludedParams()) {
+            return [];
         }
 
-        $relationships[] = $this->customer->getAsRelation();
+        $relationships = [];
+
+        if ($this->elementIsInIncludedParams(self::ITEMS_INCLUDED)) {
+            foreach ($this->order_items as $element) {
+                $relationships[] = $element->getAsRelation();
+            }
+        }
+
+        if ($this->elementIsInIncludedParams(self::CUSTOMER_INCLUDED)) {
+            $relationships[] = $this->customer->getAsRelation();
+        }
 
         return ResponseBuilder::buildRelationships(
             'order',
@@ -88,13 +103,25 @@ class OrderResponse implements InterfaceResponse
         );
     }
 
-
-    public static function createFromModel($model): self
+    private function elementIsInIncludedParams(string $element): bool
     {
-        $customer = CustomerResponse::createFromModel($model->customer()->first());
+        $included = array_intersect(self::INCLUDE_OPTIONS, $this->includedParams);
+        return in_array($element, $included);
+    }
+
+    public static function createFromModel(Order|Model $model, array $includedParams = []): self
+    {
+        $included = array_intersect(self::INCLUDE_OPTIONS, $includedParams);
+        $customer = null;
         $orderItems = [];
-        foreach($model->orderItems()->get() as $element){
-            $orderItems[] = OrderItemResponse::createFromModel($element);
+        if (in_array(self::CUSTOMER_INCLUDED, $included)) {
+            $customer = CustomerResponse::createFromModel($model->customer()->first(), $includedParams);
+        }
+
+        if (in_array(self::ITEMS_INCLUDED, $included)) {
+            foreach ($model->orderItems()->get() as $element) {
+                $orderItems[] = OrderItemResponse::createFromModel($element, $includedParams);
+            }
         }
         return new self(
             $model->id,
@@ -103,6 +130,7 @@ class OrderResponse implements InterfaceResponse
             $model->status,
             $model->created_at,
             $model->updated_at,
+            $includedParams
         );
     }
 }

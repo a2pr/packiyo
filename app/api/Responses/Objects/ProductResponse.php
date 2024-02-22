@@ -4,18 +4,19 @@ namespace App\api\Responses\Objects;
 
 use App\api\Responses\Helpers\ResponseBuilder;
 use App\Models\Customer;
+use App\Models\Product;
+use Illuminate\Database\Eloquent\Model;
 
-class ProductResponse implements InterfaceResponse
+class ProductResponse extends AbstractResponse implements InterfaceResponse
 {
+    const INCLUDE_OPTIONS = [self::CUSTOMER_INCLUDED];
     const TYPE = 'products';
     public int $id;
-    public CustomerResponse $customer;
+    public ?CustomerResponse $customer;
     public string $name;
     public string $description;
-    public string $created;
-    public string $updated;
 
-    public function __construct(int $id, CustomerResponse $customer, string $name, string $description, string $created, string $updated)
+    public function __construct(int $id, ?CustomerResponse $customer, string $name, string $description, string $created, string $updated, array $includedParams = [])
     {
         $this->id = $id;
         $this->customer = $customer;
@@ -23,7 +24,9 @@ class ProductResponse implements InterfaceResponse
         $this->description = $description;
         $this->created = $created;
         $this->updated = $updated;
+        $this->includedParams = $includedParams;
     }
+
 
     public function getAsData(): array
     {
@@ -34,26 +37,50 @@ class ProductResponse implements InterfaceResponse
             "updated" => $this->updated
         ];
 
+        $relationships = [];
+        if ($this->elementIsInIncludedParams(self::CUSTOMER_INCLUDED)) {
+            $relationships[] = $this->customer->getAsRelation();
+        }
+
         return ResponseBuilder::buildData(
             self::TYPE,
             $this->id,
             $attributes,
-            $this->customer->getAsRelation()
-        );
-    }
-
-    public function getAsIncluded(): array
-    {
-        return ResponseBuilder::buildRelationships(
-            'product',
-            self::TYPE,
-            $this->id,
-            $this->customer->getAsRelation()
+            $relationships
         );
     }
 
     public function getAsRelation(): array
     {
+        if (!$this->hasIncludedParams()) {
+            return [];
+        }
+
+        $relationships = [];
+        if ($this->elementIsInIncludedParams(self::CUSTOMER_INCLUDED)) {
+            $relationships[] = $this->customer->getAsRelation();
+        }
+
+
+        return ResponseBuilder::buildRelationships(
+            'product',
+            self::TYPE,
+            $this->id,
+            $relationships
+        );
+    }
+
+    public function getAsIncluded(): array
+    {
+        if (!$this->hasIncludedParams()) {
+            return [];
+        }
+
+        $included = [];
+        if ($this->elementIsInIncludedParams(self::CUSTOMER_INCLUDED)) {
+            $included[] = $this->customer->getAsIncluded();
+        }
+
         $attributes = [
             "name" => $this->name,
             "description" => $this->description,
@@ -65,13 +92,24 @@ class ProductResponse implements InterfaceResponse
             self::TYPE,
             $this->id,
             $attributes,
-            $this->customer->getAsRelation()
+            $included
         );
     }
 
-    public static function createFromModel($model): self
+    private function elementIsInIncludedParams(string $element): bool
     {
-        $customer = CustomerResponse::createFromModel($model->customer()->first());
+        $included = array_intersect(self::INCLUDE_OPTIONS, $this->includedParams);
+        return in_array($element, $included);
+    }
+
+    public static function createFromModel(Product|Model $model, array $includedParams = []): self
+    {
+        $included = array_intersect(self::INCLUDE_OPTIONS, $includedParams);
+        $customer = null;
+        if (in_array(self::CUSTOMER_INCLUDED, $included)) {
+            $customer = CustomerResponse::createFromModel($model->customer()->first(), $includedParams);
+        }
+
         return new self(
             $model->id,
             $customer,
@@ -79,6 +117,7 @@ class ProductResponse implements InterfaceResponse
             $model->description,
             $model->created_at,
             $model->updated_at,
+            $includedParams
         );
     }
 }

@@ -4,23 +4,23 @@ namespace App\api\Responses\Objects;
 
 use App\api\Responses\Helpers\ResponseBuilder;
 use App\Models\Customer;
+use Illuminate\Database\Eloquent\Model;
 
-class CustomerResponse implements InterfaceResponse
+class CustomerResponse extends AbstractResponse implements InterfaceResponse
 {
     const TYPE = 'customers';
     public int $id;
     public string $name;
     public string $location;
-    public string $created;
-    public string $updated;
 
-    public function __construct(int $id, string $name, string $location, string $created, string $updated)
+    public function __construct(int $id, string $name, string $location, string $created, string $updated, array $includedParams = [])
     {
         $this->id = $id;
         $this->name = $name;
         $this->location = $location;
         $this->created = $created;
         $this->updated = $updated;
+        $this->includedParams = $includedParams;
     }
 
     public function getAsRelation(): array
@@ -64,10 +64,11 @@ class CustomerResponse implements InterfaceResponse
     }
 
     /**
-     * @param Customer $model
+     * @param Customer|Model $model
+     * @param array $includedParams
      * @return self
      */
-    public static function createFromModel($model):self
+    public static function createFromModel(Customer|Model $model, array $includedParams = []):self
     {
         return new self(
             $model->id,
@@ -75,6 +76,7 @@ class CustomerResponse implements InterfaceResponse
             $model->location,
             $model->created_at,
             $model->updated_at,
+            $includedParams
         );
     }
 }

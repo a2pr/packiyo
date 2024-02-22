@@ -2,20 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\api\Responses\ErrorResponse;
 use App\api\Responses\Objects\OrderResponse;
-use App\api\Responses\OrderCreateResponse;
 use App\api\Responses\OrderRetrieveResponse;
 use App\api\Responses\OrdersRetrieveResponse;
-use App\DataTransferObject\OrderInventoryDto;
-use App\Events\OrderEvent;
 use App\Http\Facades\OrderFacade;
-use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class OrderController extends Controller
@@ -25,12 +17,12 @@ class OrderController extends Controller
      */
     public function index()
     {
+        $include = request('included');
         $orders = Order::all();
-
         $orderResponses = [];
 
         foreach ($orders as $order) {
-            $orderResponses[] = OrderResponse::createFromModel($order);
+            $orderResponses[] = OrderResponse::createFromModel($order, explode(",", $include));
         }
 
         $ordersRetrieveResponse = new OrdersRetrieveResponse($orderResponses);
@@ -68,7 +60,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        $orderResponse = new OrderRetrieveResponse(OrderResponse::createFromModel($order));
+        $include = request('included');
+        $orderResponse = new OrderRetrieveResponse(OrderResponse::createFromModel($order, explode(",", $include)));
 
         $headers = [
             'Content-Type' => 'application/vnd.api+json'

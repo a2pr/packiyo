@@ -3,23 +3,25 @@
 namespace App\api\Responses\Objects;
 
 use App\api\Responses\Helpers\ResponseBuilder;
+use App\Models\OrderItem;
+use Illuminate\Database\Eloquent\Model;
 
-class OrderItemResponse implements InterfaceResponse
+class OrderItemResponse extends AbstractResponse implements InterfaceResponse
 {
+    const INCLUDE_OPTIONS = [self::PRODUCT_INCLUDED];
     const TYPE = 'order-items';
     public int $id;
-    public ProductResponse $product;
+    public ?ProductResponse $product;
     public int $quantity;
-    public string $created;
-    public string $updated;
 
-    public function __construct(int $id, ProductResponse $product, int $quantity, string $created, string $updated)
+    public function __construct(int $id, ?ProductResponse $product, int $quantity, string $created, string $updated, array $includedParams = [])
     {
         $this->id = $id;
         $this->product = $product;
         $this->quantity = $quantity;
         $this->created = $created;
         $this->updated = $updated;
+        $this->includedParams = $includedParams;
     }
 
     public function getAsData(): array
@@ -34,22 +36,41 @@ class OrderItemResponse implements InterfaceResponse
             self::TYPE,
             $this->id,
             $attributes,
-            $this->product->getAsRelation()
-        );
-    }
-
-    public function getAsIncluded(): array
-    {
-        return ResponseBuilder::buildRelationships(
-            'order-item',
-            self::TYPE,
-            $this->id,
-            $this->product->getAsRelation()
+            empty($this->product) ? [] : $this->product->getAsRelation()
         );
     }
 
     public function getAsRelation(): array
     {
+        if (!$this->hasIncludedParams()) {
+            return [];
+        }
+
+        $relationships = [];
+        if ($this->elementIsInIncludedParams(self::PRODUCT_INCLUDED)) {
+            $relationships[] = $this->product->getAsRelation();
+        }
+
+        return ResponseBuilder::buildRelationships(
+            'order-item',
+            self::TYPE,
+            $this->id,
+            $relationships
+        );
+    }
+
+    public function getAsIncluded(): array
+    {
+        if (!$this->hasIncludedParams()) {
+            return [];
+        }
+
+        $relationships = [];
+        if ($this->elementIsInIncludedParams(self::PRODUCT_INCLUDED)) {
+            $relationships[] = $this->product->getAsRelation();
+
+        }
+
         $attributes = [
             "quantity" => $this->quantity,
             "created" => $this->created,
@@ -60,19 +81,31 @@ class OrderItemResponse implements InterfaceResponse
             self::TYPE,
             $this->id,
             $attributes,
-            $this->product->getAsRelation()
+            $relationships
         );
     }
 
-    public static function createFromModel($model): self
+    private function elementIsInIncludedParams(string $element): bool
     {
-        $productResponse = ProductResponse::createFromModel($model->products()->first());
+        $included = array_intersect(self::INCLUDE_OPTIONS, $this->includedParams);
+        return in_array($element, $included);
+    }
+
+    public static function createFromModel(OrderItem|Model $model, array $includedParams = []): self
+    {
+        $included = array_intersect(self::INCLUDE_OPTIONS, $includedParams);
+        $productResponse = null;
+        if (in_array(self::PRODUCT_INCLUDED, $included)) {
+            $productResponse = ProductResponse::createFromModel($model->products()->first(), $includedParams);
+        }
+
         return new self(
             $model->id,
             $productResponse,
             $model->quantity,
             $model->created_at,
             $model->updated_at,
+            $includedParams
         );
     }
 }
