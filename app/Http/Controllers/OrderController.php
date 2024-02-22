@@ -39,7 +39,6 @@ class OrderController extends Controller
         $data = $request->all();
         // check elements in product array
         $orderFacade = new OrderFacade();
-        $data = $orderFacade->groupProductDetailsInRequest($data);
         list($statusCode, $orderResponse) = $orderFacade->processRequest($data);
         $headers = [
             'Content-Type' => 'application/vnd.api+json'

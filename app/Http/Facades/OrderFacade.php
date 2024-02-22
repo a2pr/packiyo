@@ -17,34 +17,6 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class OrderFacade
 {
-    /**
-     * @throws Exception
-     */
-    public function groupProductDetailsInRequest(array $data): array
-    {
-        $outputArray = [];
-        foreach ($data['products'] as $item) {
-            $productId = $item['id'];
-            if ((int)$item['quantity'] < 0) {
-                throw new Exception(
-                    'Product quantity cant be negative values',
-                    ResponseAlias::HTTP_BAD_REQUEST
-                );
-            }
-
-            $quantity = $item['quantity'];
-
-            if (isset($outputArray[$productId])) {
-                // If the id already exists, merge quantities
-                $outputArray[$productId]['quantity'] += $quantity;
-            } else {
-                // Otherwise, create a new entry
-                $outputArray[$productId] = ['id' => $productId, 'quantity' => $quantity];
-            }
-        }
-
-        return $outputArray;
-    }
 
     /**
      * @param array $data
@@ -54,6 +26,8 @@ class OrderFacade
     {
         $statusCode = ResponseAlias::HTTP_OK;
         try {
+
+            $data = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
 
             if (empty($customer)) {
@@ -109,6 +83,35 @@ class OrderFacade
             );
         }
         return array($statusCode, $orderResponse);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function groupProductDetailsInRequest(array $data): array
+    {
+        $outputArray = [];
+        foreach ($data['products'] as $item) {
+            $productId = $item['id'];
+            if ((int)$item['quantity'] < 0) {
+                throw new Exception(
+                    'Product quantity cant be negative values',
+                    ResponseAlias::HTTP_BAD_REQUEST
+                );
+            }
+
+            $quantity = $item['quantity'];
+
+            if (isset($outputArray[$productId])) {
+                // If the id already exists, merge quantities
+                $outputArray[$productId]['quantity'] += $quantity;
+            } else {
+                // Otherwise, create a new entry
+                $outputArray[$productId] = ['id' => $productId, 'quantity' => $quantity];
+            }
+        }
+
+        return $outputArray;
     }
 
     /**
