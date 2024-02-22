@@ -16,7 +16,7 @@ class OrderCreateResponse extends AbstractResponse
 
     public function getData(): array
     {
-        return $this->order->getAsRelation();
+        return $this->order->getAsData();
     }
 
     public function getIncluded(): array

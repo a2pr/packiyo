@@ -7,6 +7,7 @@ use App\Models\Customer;
 
 class ProductResponse implements InterfaceResponse
 {
+    const TYPE = 'products';
     public int $id;
     public CustomerResponse $customer;
     public string $name;
@@ -24,12 +25,28 @@ class ProductResponse implements InterfaceResponse
         $this->updated = $updated;
     }
 
+    public function getAsData(): array
+    {
+        $attributes = [
+            "name" => $this->name,
+            "description" => $this->description,
+            "created" => $this->created,
+            "updated" => $this->updated
+        ];
+
+        return ResponseBuilder::buildData(
+            self::TYPE,
+            $this->id,
+            $attributes,
+            $this->customer->getAsRelation()
+        );
+    }
 
     public function getAsIncluded(): array
     {
         return ResponseBuilder::buildRelationships(
             'product',
-            'products',
+            self::TYPE,
             $this->id,
             $this->customer->getAsRelation()
         );
@@ -45,7 +62,7 @@ class ProductResponse implements InterfaceResponse
         ];
 
         return ResponseBuilder::buildIncluded(
-            'customers',
+            self::TYPE,
             $this->id,
             $attributes,
             $this->customer->getAsRelation()

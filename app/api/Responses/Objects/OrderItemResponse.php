@@ -6,6 +6,7 @@ use App\api\Responses\Helpers\ResponseBuilder;
 
 class OrderItemResponse implements InterfaceResponse
 {
+    const TYPE = 'order-items';
     public int $id;
     public ProductResponse $product;
     public int $quantity;
@@ -21,11 +22,26 @@ class OrderItemResponse implements InterfaceResponse
         $this->updated = $updated;
     }
 
+    public function getAsData():array
+    {
+        $attributes = [
+            "quantity" => $this->quantity,
+            "created" => $this->created,
+            "updated" => $this->updated
+        ];
+
+        return ResponseBuilder::buildData(
+            self::TYPE,
+            $this->id,
+            $attributes,
+            $this->product->getAsRelation()
+        );
+    }
     public function getAsIncluded(): array
     {
         return ResponseBuilder::buildRelationships(
             'order-item',
-            'order-items',
+            self::TYPE,
             $this->id,
             $this->product->getAsRelation()
         );
@@ -40,7 +56,7 @@ class OrderItemResponse implements InterfaceResponse
         ];
 
         return ResponseBuilder::buildIncluded(
-            'customers',
+            self::TYPE,
             $this->id,
             $attributes,
             $this->product->getAsRelation()

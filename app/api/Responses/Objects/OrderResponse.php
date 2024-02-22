@@ -7,6 +7,7 @@ use App\Models\Order;
 
 class OrderResponse implements InterfaceResponse
 {
+    const TYPE = 'orders';
     public int $order_id;
     public CustomerResponse $customer;
     public array $order_items;
@@ -24,25 +25,8 @@ class OrderResponse implements InterfaceResponse
         $this->updated = $updated;
     }
 
-    public function getAsIncluded(): array
+    public function getAsData(): array
     {
-        $relationships = [];
-        foreach ($this->order_items as $element) {
-            $relationships[] = $element->getAsRelation();
-        }
-
-        $relationships[] = $this->customer->getAsRelation();
-        return ResponseBuilder::buildRelationships(
-            'order',
-            'orders',
-            $this->order_id,
-            $relationships
-        );
-    }
-
-    public function getAsRelation(): array
-    {
-
         $relationships = [];
         foreach ($this->order_items as $element) {
             $relationships[] = $element->getAsRelation();
@@ -51,15 +35,55 @@ class OrderResponse implements InterfaceResponse
         $relationships[] = $this->customer->getAsRelation();
 
         $attributes = [
-            "status" => $this->status,
-            "created" => $this->created,
-            "updated" => $this->updated
+            'status' => $this->status,
+            'created' => $this->created,
+            'updated' => $this->updated,
+        ];
+
+        return ResponseBuilder::buildData(
+            self::TYPE,
+            $this->order_id,
+            $attributes,
+            $relationships
+        );
+    }
+
+    public function getAsIncluded(): array
+    {
+        $relationships = [];
+        foreach ($this->order_items as $element) {
+            $relationships[] = $element->getAsRelation();
+        }
+
+        $relationships[] = $this->customer->getAsRelation();
+
+        $attributes = [
+            'status' => $this->status,
+            'created' => $this->created,
+            'updated' => $this->updated,
         ];
 
         return ResponseBuilder::buildIncluded(
-            'orders',
+            self::TYPE,
             $this->order_id,
             $attributes,
+            $relationships
+        );
+    }
+
+    public function getAsRelation(): array
+    {
+        $relationships = [];
+        foreach ($this->order_items as $orderItem) {
+            $relationships[] = $orderItem->getAsRelation();
+        }
+
+        $relationships[] = $this->customer->getAsRelation();
+
+        return ResponseBuilder::buildRelationships(
+            'order',
+            self::TYPE,
+            $this->order_id,
             $relationships
         );
     }

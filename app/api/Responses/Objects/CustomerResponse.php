@@ -3,9 +3,11 @@
 namespace App\api\Responses\Objects;
 
 use App\api\Responses\Helpers\ResponseBuilder;
+use App\Models\Customer;
 
 class CustomerResponse implements InterfaceResponse
 {
+    const TYPE = 'customers';
     public int $id;
     public string $name;
     public string $location;
@@ -25,7 +27,7 @@ class CustomerResponse implements InterfaceResponse
     {
         return ResponseBuilder::buildRelationships(
             'customer',
-            'customers',
+            self::TYPE,
             $this->id,
         );
     }
@@ -40,9 +42,39 @@ class CustomerResponse implements InterfaceResponse
         ];
 
         return ResponseBuilder::buildIncluded(
-            'customers',
+            self::TYPE,
             $this->id,
             $attributes
+        );
+    }
+
+    public function getAsData(): array
+    {
+        $attributes = [
+            "name" => $this->name,
+            "location" => $this->location,
+            "created" => $this->created,
+            "updated" => $this->updated
+        ];
+        return ResponseBuilder::buildData(
+            self::TYPE,
+            $this->id,
+            $attributes
+        );
+    }
+
+    /**
+     * @param Customer $model
+     * @return self
+     */
+    public static function createFromModel($model):self
+    {
+        return new self(
+            $model->id,
+            $model->name,
+            $model->location,
+            $model->created_at,
+            $model->updated_at,
         );
     }
 }
