@@ -28,6 +28,8 @@ class OrdersRetrieveResponse extends AbstractResponse
             $data[] = $order->getAsIncluded();
         }
 
-        return $data;
+        return array_filter($data, function ($subArray) {
+            return !empty($subArray);
+        });
     }
 }
