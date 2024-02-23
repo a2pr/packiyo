@@ -1,4 +1,13 @@
-# run project
+# Requirements
+- The *create order* and *retrieve order* endpoints should follow the JSON-API spec.
+- The models must be such that:
+- A customer has products;
+- A product has inventory;
+- An order has line items;
+- The line items in an order reference a given quantity of a given product;
+- Orders have a ready_to_ship property which determines whether there is enough inventory to fulfill the order given other existing orders for the same products.
+
+# Run project
 ## Native Laravel
 - install mysql 8.0 and php  8.2
 - composer install
