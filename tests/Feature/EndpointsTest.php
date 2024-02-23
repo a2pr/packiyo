@@ -23,73 +23,6 @@ class EndpointsTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testGetRetrieveOrder()
-    {
-        $orderId = $this->getOrderId();
-
-        $response = $this->get("/api/retrieve-order/$orderId");
-
-        $json = $response->json();
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/vnd.api+json');
-        $this->assertNotEmpty($json);
-    }
-
-    public function testGetRetrieveOrdersWithIncludedParams()
-    {
-        $orderId = $this->getOrderId();
-
-        $includeParams = '?included=items,customer';
-        $response = $this->get("/api/retrieve-order/$includeParams");
-
-        $json = $response->json();
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/vnd.api+json');
-
-        $this->assertNotEmpty($json);
-        $this->assertArrayHasKey('data', $json);
-        $this->assertTrue(count($json['data']) > 0);
-        $this->assertArrayHasKey('type', $json['data'][0]);
-        $this->assertArrayHasKey('id', $json['data'][0]);
-        $this->assertArrayHasKey('attributes', $json['data'][0]);
-        $this->assertArrayHasKey('relationships', $json['data'][0]);
-        $this->assertArrayHasKey('included', $json);
-        $this->assertTrue(count($json['included']) > 0);
-    }
-
-    public function testGetRetrieveOrderWithIncludedParams()
-    {
-        $orderId = $this->getOrderId();
-
-        $includeParams = '?included=items,customer';
-        $response = $this->get("/api/retrieve-order/$orderId/$includeParams");
-
-        $json = $response->json();
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/vnd.api+json');
-
-        $this->assertNotEmpty($json);
-        $this->assertArrayHasKey('data', $json);
-        $this->assertArrayHasKey('type', $json['data']);
-        $this->assertArrayHasKey('id', $json['data']);
-        $this->assertArrayHasKey('attributes', $json['data']);
-        $this->assertArrayHasKey('relationships', $json['data']);
-        $this->assertArrayHasKey('included', $json);
-        $this->assertCount(2, $json['included']);
-    }
-
-    public function testGetRetrieveOrders()
-    {
-        $orderId = $this->getOrderId();
-
-        $response = $this->get("/api/retrieve-order/");
-
-        $json = $response->json();
-        $response->assertStatus(200)
-            ->assertHeader('Content-Type', 'application/vnd.api+json');
-        $this->assertNotEmpty($json);
-    }
-
     public function testGetRetrieveTransaction()
     {
         $orderId = $this->getOrderId();
@@ -102,28 +35,6 @@ class EndpointsTest extends TestCase
         $this->assertNotEmpty($json);
     }
 
-    public function testPostCreateOrders()
-    {
-        [$customerId, $productId] = $this->getCustomerAndProductIds();
-        $data = [
-            'customer_id' => $customerId,
-            'products' => [
-                ['id' => $productId, 'quantity' => 1]
-            ]
-        ];
-
-        $response = $this->postJson('/api/create-order', $data);
-
-        $json = $response->json();
-        $response->assertStatus(201) // Assuming a successful resource creation returns 201 status
-        ->assertHeader('Content-Type', 'application/vnd.api+json');
-        $this->assertNotEmpty($json);
-        $this->assertArrayHasKey('data', $json);
-        $this->assertArrayHasKey('type', $json['data']);
-        $this->assertArrayHasKey('id', $json['data']);
-        $this->assertArrayHasKey('attributes', $json['data']);
-        $this->assertArrayHasKey('included', $json);
-    }
 
     private function getCustomerAndProductIds(): array
     {

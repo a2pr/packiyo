@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class OrderFacade
 {
-
     /**
      * @param array $data
      * @return array
@@ -28,6 +27,12 @@ class OrderFacade
         $statusCode = ResponseAlias::HTTP_CREATED;
         try {
 
+            if(empty($data['products'])){
+                throw new Exception(
+                    'Empty products array',
+                    ResponseAlias::HTTP_BAD_REQUEST
+                );
+            }
             $data['products'] = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
 
@@ -79,8 +84,13 @@ class OrderFacade
         } catch (Exception $e) {
             Log::error($e->getMessage());
             $statusCode = $e->getCode();
+
+            if ($statusCode < 400 || $statusCode > 500) {
+                $statusCode = 500;
+            }
+
             $orderResponse = new ErrorResponse(
-                $e->getCode(),
+                $statusCode,
                 $e
             );
         }
@@ -95,12 +105,7 @@ class OrderFacade
         $outputArray = [];
         foreach ($data['products'] as $item) {
             $productId = $item['id'];
-            if ((int)$item['quantity'] < 0) {
-                throw new Exception(
-                    'Product quantity cant be negative values',
-                    ResponseAlias::HTTP_BAD_REQUEST
-                );
-            }
+            $this->validateQuantityValue($item['quantity']);
 
             $quantity = $item['quantity'];
 
@@ -178,6 +183,37 @@ class OrderFacade
         $inventory = $this->getInventoryFromProductId($element['id']);
         $updated_available_inventory = $inventory->available_inventory - $element['quantity'];
         return array($inventory, $updated_available_inventory);
+    }
+
+    /**
+     * @param mixed $quantity
+     * @return void
+     * @throws Exception
+     */
+    private function validateQuantityValue(mixed $quantity): void
+    {
+        if (empty($quantity)) {
+            throw new Exception(
+                'Product quantity is missing',
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
+        }
+
+        $quantity = (int)$quantity;
+
+        if ($quantity == 0) {
+            throw new Exception(
+                'Product quantity needs to be an integer',
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
+        }
+
+        if ($quantity < 0) {
+            throw new Exception(
+                'Product quantity cant be negative values',
+                ResponseAlias::HTTP_BAD_REQUEST
+            );
+        }
     }
 
 
