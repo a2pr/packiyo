@@ -2,6 +2,7 @@
 
 use App\api\Responses\OrderRetrieveResponse;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,3 +29,4 @@ Route::get('hi', function () {
 Route::post('create-order', [OrderController::class, 'store'])->name('order.store');
 Route::get('retrieve-order', [OrderController::class, 'index'])->name('order.index');
 Route::get('retrieve-order/{order}', [OrderController::class, 'show'])->name('order.show');
+Route::get('retrieve-transaction', [TransactionController::class, 'index'])->name('transaction.index');
