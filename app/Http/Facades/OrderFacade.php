@@ -25,12 +25,11 @@ class OrderFacade
      */
     public function processRequest(array $data): array
     {
-        $statusCode = ResponseAlias::HTTP_OK;
+        $statusCode = ResponseAlias::HTTP_CREATED;
         try {
 
             $data['products'] = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
-            Log::info('hiiiii');
 
             if (empty($customer)) {
                 $this->throwMissingModelException('Customer');
@@ -75,7 +74,7 @@ class OrderFacade
 
             $this->eventTransaction($order, $newStatus);
 
-            $orderResponse = new OrderCreateResponse(OrderResponse::createFromModel($order));
+            $orderResponse = new OrderCreateResponse(OrderResponse::createFromModel($order, [OrderResponse::ITEMS_INCLUDED]));
 
         } catch (Exception $e) {
             Log::error($e->getMessage());

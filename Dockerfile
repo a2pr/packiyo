@@ -20,8 +20,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copy the current directory contents into the container at /var/www/html
 COPY ./ /var/www/html
 
-RUN rm -f ./.env.local1
-RUN mv .env.local1.example .env.local1
+RUN rm -f ./.env.local
+RUN mv .env.local.example .env.local
 
 # Install Laravel dependencies
 RUN composer install --no-scripts --no-interaction --prefer-dist

@@ -3,8 +3,8 @@
 - event dispatch x
 - transactions x
 - test for controllers
-- test for Transaction
-- test for relation in responses
-- docker setup
+- test for Transaction x
+- test for relation in responses x
+- docker setup x
 - documentation  x
 - postman collection x

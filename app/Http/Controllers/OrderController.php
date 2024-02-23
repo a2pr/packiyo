@@ -45,7 +45,6 @@ class OrderController extends Controller
         ]);
 
         $data = $request->all();
-        Log::info('here something');
         // check elements in product array
         $orderFacade = new OrderFacade();
 

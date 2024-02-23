@@ -1,5 +1,5 @@
 # .dockerignore
 
-.env.local1
+.env.local
 .env.testing
 .git
