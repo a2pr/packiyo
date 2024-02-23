@@ -26,13 +26,6 @@ class OrderFacade
     {
         $statusCode = ResponseAlias::HTTP_CREATED;
         try {
-
-            if(empty($data['products'])){
-                throw new Exception(
-                    'Empty products array',
-                    ResponseAlias::HTTP_BAD_REQUEST
-                );
-            }
             $data['products'] = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
 
@@ -97,15 +90,11 @@ class OrderFacade
         return array($statusCode, $orderResponse);
     }
 
-    /**
-     * @throws Exception
-     */
-    private function groupProductDetailsInRequest(array $data): array
+    public function groupProductDetailsInRequest(array $data): array
     {
         $outputArray = [];
         foreach ($data['products'] as $item) {
             $productId = $item['id'];
-            $this->validateQuantityValue($item['quantity']);
 
             $quantity = $item['quantity'];
 
@@ -184,37 +173,4 @@ class OrderFacade
         $updated_available_inventory = $inventory->available_inventory - $element['quantity'];
         return array($inventory, $updated_available_inventory);
     }
-
-    /**
-     * @param mixed $quantity
-     * @return void
-     * @throws Exception
-     */
-    private function validateQuantityValue(mixed $quantity): void
-    {
-        if (empty($quantity)) {
-            throw new Exception(
-                'Product quantity is missing',
-                ResponseAlias::HTTP_BAD_REQUEST
-            );
-        }
-
-        $quantity = (int)$quantity;
-
-        if ($quantity == 0) {
-            throw new Exception(
-                'Product quantity needs to be an integer',
-                ResponseAlias::HTTP_BAD_REQUEST
-            );
-        }
-
-        if ($quantity < 0) {
-            throw new Exception(
-                'Product quantity cant be negative values',
-                ResponseAlias::HTTP_BAD_REQUEST
-            );
-        }
-    }
-
-
 }

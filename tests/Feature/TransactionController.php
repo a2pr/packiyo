@@ -11,46 +11,18 @@ use App\Models\Product;
 use App\Models\Transaction;
 use Tests\TestCase;
 
-class EndpointsTest extends TestCase
+class TransactionController extends TestCase
 {
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
 
     public function testGetRetrieveTransaction()
     {
         $orderId = $this->getOrderId();
-
         $response = $this->get("/api/retrieve-transaction/");
 
         $json = $response->json();
         $response->assertStatus(200)
             ->assertHeader('Content-Type', 'application/vnd.api+json');
         $this->assertNotEmpty($json);
-    }
-
-
-    private function getCustomerAndProductIds(): array
-    {
-        $customer = Customer::factory(1)->create();
-        $product = Product::factory(1)->create([
-            'customer_id' => $customer->first()->id
-        ]);
-
-        $inventory = Inventory::factory(1)->create([
-            'product_id' => $product->first()->id
-        ]);
-
-        return [
-            $customer->first()->id,
-            $product->first()->id
-        ];
     }
 
     /**

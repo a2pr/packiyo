@@ -176,6 +176,7 @@ class OrderControllerTest extends TestCase
     }
 
     /**
+     * @param int $param
      * @return int
      */
     private function getOrderId( int $param = 1): int

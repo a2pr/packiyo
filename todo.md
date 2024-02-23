@@ -2,7 +2,7 @@
 - controller x
 - event dispatch x
 - transactions x
-- test for controllers
+- test for controllers x
 - test for Transaction x
 - test for relation in responses x
 - docker setup x
