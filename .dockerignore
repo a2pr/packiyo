@@ -1,0 +1,5 @@
+# .dockerignore
+
+.env.local1
+.env.testing
+.git

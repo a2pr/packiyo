@@ -8,6 +8,7 @@ use App\api\Responses\OrdersRetrieveResponse;
 use App\Http\Facades\OrderFacade;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class OrderController extends Controller
@@ -44,6 +45,7 @@ class OrderController extends Controller
         ]);
 
         $data = $request->all();
+        Log::info('here something');
         // check elements in product array
         $orderFacade = new OrderFacade();
 

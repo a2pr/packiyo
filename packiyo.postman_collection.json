@@ -1,0 +1,471 @@
+{
+	"info": {
+		"_postman_id": "8fc9511c-5567-48f1-850b-6ac0faa269ae",
+		"name": "packiyo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12945371"
+	},
+	"item": [
+		{
+			"name": "Create order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"customer_id\": 1,\n    \"products\":[\n        {\n            \"id\":1,\n            \"quantity\":2\n        },\n        {\n            \"id\":2,\n            \"quantity\":2\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/create-order",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"create-order"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create order",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customer_id\": 1,\n    \"products\":[\n        {\n            \"id\":1,\n            \"quantity\":2\n        },\n        {\n            \"id\":2,\n            \"quantity\":2\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/create-order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"create-order"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.2.15"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/vnd.api+json"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 22 Feb 2024 18:53:19 GMT"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "59"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"type\": \"orders\",\n        \"id\": 2,\n        \"attributes\": {\n            \"status\": \"ready_to_ship\",\n            \"created\": \"2024-02-22 18:53:19\",\n            \"updated\": \"2024-02-22 18:53:19\"\n        },\n        \"relationships\": [\n            {\n                \"type\": \"order-items\",\n                \"id\": 3,\n                \"attributes\": {\n                    \"quantity\": 2,\n                    \"created\": \"2024-02-22 18:53:19\",\n                    \"updated\": \"2024-02-22 18:53:19\"\n                },\n                \"relationships\": {\n                    \"type\": \"products\",\n                    \"id\": 1,\n                    \"attributes\": {\n                        \"name\": \"Margot Orn\",\n                        \"description\": \"Illum sed accusamus fugit impedit.\",\n                        \"created\": \"2024-02-21 13:50:27\",\n                        \"updated\": \"2024-02-21 13:50:27\"\n                    },\n                    \"relationships\": {\n                        \"customer\": {\n                            \"data\": {\n                                \"type\": \"customers\",\n                                \"id\": 1\n                            }\n                        }\n                    }\n                }\n            },\n            {\n                \"type\": \"order-items\",\n                \"id\": 4,\n                \"attributes\": {\n                    \"quantity\": 2,\n                    \"created\": \"2024-02-22 18:53:19\",\n                    \"updated\": \"2024-02-22 18:53:19\"\n                },\n                \"relationships\": {\n                    \"type\": \"products\",\n                    \"id\": 2,\n                    \"attributes\": {\n                        \"name\": \"Efren Kemmer\",\n                        \"description\": \"Beatae mollitia illo adipisci explicabo minus esse et.\",\n                        \"created\": \"2024-02-21 13:50:27\",\n                        \"updated\": \"2024-02-21 13:50:27\"\n                    },\n                    \"relationships\": {\n                        \"customer\": {\n                            \"data\": {\n                                \"type\": \"customers\",\n                                \"id\": 1\n                            }\n                        }\n                    }\n                }\n            },\n            {\n                \"customer\": {\n                    \"data\": {\n                        \"type\": \"customers\",\n                        \"id\": 1\n                    }\n                }\n            }\n        ]\n    },\n    \"included\": {\n        \"type\": \"orders\",\n        \"id\": 2,\n        \"attributes\": {\n            \"status\": \"ready_to_ship\",\n            \"created\": \"2024-02-22 18:53:19\",\n            \"updated\": \"2024-02-22 18:53:19\"\n        },\n        \"relationships\": [\n            {\n                \"type\": \"order-items\",\n                \"id\": 3,\n                \"attributes\": {\n                    \"quantity\": 2,\n                    \"created\": \"2024-02-22 18:53:19\",\n                    \"updated\": \"2024-02-22 18:53:19\"\n                },\n                \"relationships\": {\n                    \"type\": \"products\",\n                    \"id\": 1,\n                    \"attributes\": {\n                        \"name\": \"Margot Orn\",\n                        \"description\": \"Illum sed accusamus fugit impedit.\",\n                        \"created\": \"2024-02-21 13:50:27\",\n                        \"updated\": \"2024-02-21 13:50:27\"\n                    },\n                    \"relationships\": {\n                        \"customer\": {\n                            \"data\": {\n                                \"type\": \"customers\",\n                                \"id\": 1\n                            }\n                        }\n                    }\n                }\n            },\n            {\n                \"type\": \"order-items\",\n                \"id\": 4,\n                \"attributes\": {\n                    \"quantity\": 2,\n                    \"created\": \"2024-02-22 18:53:19\",\n                    \"updated\": \"2024-02-22 18:53:19\"\n                },\n                \"relationships\": {\n                    \"type\": \"products\",\n                    \"id\": 2,\n                    \"attributes\": {\n                        \"name\": \"Efren Kemmer\",\n                        \"description\": \"Beatae mollitia illo adipisci explicabo minus esse et.\",\n                        \"created\": \"2024-02-21 13:50:27\",\n                        \"updated\": \"2024-02-21 13:50:27\"\n                    },\n                    \"relationships\": {\n                        \"customer\": {\n                            \"data\": {\n                                \"type\": \"customers\",\n                                \"id\": 1\n                            }\n                        }\n                    }\n                }\n            },\n            {\n                \"customer\": {\n                    \"data\": {\n                        \"type\": \"customers\",\n                        \"id\": 1\n                    }\n                }\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Retrieve Order",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/retrieve-order/2?included=items,customer,product",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"retrieve-order",
+						"2"
+					],
+					"query": [
+						{
+							"key": "included",
+							"value": "items,customer,product"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Retrieve Order",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/retrieve-order/2?included=items,customer,product",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"retrieve-order",
+								"2"
+							],
+							"query": [
+								{
+									"key": "included",
+									"value": "items,customer,product"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.2.15"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/vnd.api+json"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 22 Feb 2024 23:57:20 GMT"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "55"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"type\": \"orders\",\n        \"id\": 2,\n        \"attributes\": {\n            \"status\": \"1\",\n            \"created\": \"2024-02-22 18:53:19\",\n            \"updated\": \"2024-02-22 18:53:19\"\n        },\n        \"relationships\": [\n            {\n                \"order-item\": {\n                    \"data\": {\n                        \"type\": \"order-items\",\n                        \"id\": 3\n                    }\n                },\n                \"relationships\": [\n                    {\n                        \"product\": {\n                            \"data\": {\n                                \"type\": \"products\",\n                                \"id\": 1\n                            }\n                        },\n                        \"relationships\": [\n                            {\n                                \"customer\": {\n                                    \"data\": {\n                                        \"type\": \"customers\",\n                                        \"id\": 1\n                                    }\n                                }\n                            }\n                        ]\n                    }\n                ]\n            },\n            {\n                \"order-item\": {\n                    \"data\": {\n                        \"type\": \"order-items\",\n                        \"id\": 4\n                    }\n                },\n                \"relationships\": [\n                    {\n                        \"product\": {\n                            \"data\": {\n                                \"type\": \"products\",\n                                \"id\": 2\n                            }\n                        },\n                        \"relationships\": [\n                            {\n                                \"customer\": {\n                                    \"data\": {\n                                        \"type\": \"customers\",\n                                        \"id\": 1\n                                    }\n                                }\n                            }\n                        ]\n                    }\n                ]\n            },\n            {\n                \"customer\": {\n                    \"data\": {\n                        \"type\": \"customers\",\n                        \"id\": 1\n                    }\n                }\n            }\n        ]\n    },\n    \"included\": [\n        {\n            \"type\": \"order-items\",\n            \"id\": 3,\n            \"attributes\": {\n                \"quantity\": 2,\n                \"created\": \"2024-02-22 18:53:19\",\n                \"updated\": \"2024-02-22 18:53:19\"\n            },\n            \"relationships\": [\n                {\n                    \"product\": {\n                        \"data\": {\n                            \"type\": \"products\",\n                            \"id\": 1\n                        }\n                    },\n                    \"relationships\": [\n                        {\n                            \"customer\": {\n                                \"data\": {\n                                    \"type\": \"customers\",\n                                    \"id\": 1\n                                }\n                            }\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"type\": \"order-items\",\n            \"id\": 4,\n            \"attributes\": {\n                \"quantity\": 2,\n                \"created\": \"2024-02-22 18:53:19\",\n                \"updated\": \"2024-02-22 18:53:19\"\n            },\n            \"relationships\": [\n                {\n                    \"product\": {\n                        \"data\": {\n                            \"type\": \"products\",\n                            \"id\": 2\n                        }\n                    },\n                    \"relationships\": [\n                        {\n                            \"customer\": {\n                                \"data\": {\n                                    \"type\": \"customers\",\n                                    \"id\": 1\n                                }\n                            }\n                        }\n                    ]\n                }\n            ]\n        },\n        {\n            \"type\": \"customers\",\n            \"id\": 1,\n            \"attributes\": {\n                \"name\": \"Lindsey Wiegand\",\n                \"location\": \"Azerbaijan\",\n                \"created\": \"2024-02-21 13:50:27\",\n                \"updated\": \"2024-02-21 13:50:27\"\n            }\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Retrieve Orders",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/retrieve-order/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"retrieve-order",
+						""
+					],
+					"query": [
+						{
+							"key": "included",
+							"value": "items,customer,product",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Retrieve Orders",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/retrieve-order/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"retrieve-order",
+								""
+							],
+							"query": [
+								{
+									"key": "included",
+									"value": "items,customer,product",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.2.15"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/vnd.api+json"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 23 Feb 2024 00:01:45 GMT"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "57"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"type\": \"orders\",\n            \"id\": 1,\n            \"attributes\": {\n                \"status\": \"0\",\n                \"created\": \"2024-02-22 11:39:40\",\n                \"updated\": \"2024-02-22 11:39:40\"\n            }\n        },\n        {\n            \"type\": \"orders\",\n            \"id\": 2,\n            \"attributes\": {\n                \"status\": \"1\",\n                \"created\": \"2024-02-22 18:53:19\",\n                \"updated\": \"2024-02-22 18:53:19\"\n            }\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Retrieve Transactions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/retrieve-transaction/?included=items,product",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"retrieve-transaction",
+						""
+					],
+					"query": [
+						{
+							"key": "included",
+							"value": "items,product"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Retrieve Transactions",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/retrieve-transaction/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"retrieve-transaction",
+								""
+							],
+							"query": [
+								{
+									"key": "included",
+									"value": "items,product",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/8.2.15"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/vnd.api+json"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 23 Feb 2024 00:39:02 GMT"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "59"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"type\": \"transactions\",\n            \"id\": 1,\n            \"attributes\": {\n                \"quantity_request\": 2,\n                \"available_inventory\": 84,\n                \"updated_available_inventory\": 82,\n                \"status_operation\": 1,\n                \"created_at,\": \"2024-02-22 18:53:19\",\n                \"updated_at,\": \"2024-02-22 18:53:19\"\n            }\n        },\n        {\n            \"type\": \"transactions\",\n            \"id\": 2,\n            \"attributes\": {\n                \"quantity_request\": 2,\n                \"available_inventory\": 40,\n                \"updated_available_inventory\": 38,\n                \"status_operation\": 1,\n                \"created_at,\": \"2024-02-22 18:53:19\",\n                \"updated_at,\": \"2024-02-22 18:53:19\"\n            }\n        }\n    ]\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "localhost:8000/api",
+			"type": "string"
+		}
+	]
+}

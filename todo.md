@@ -1,5 +1,10 @@
 - error response    x
-- controller
-- test for controller
-- event dispatch
-- transactions
+- controller x
+- event dispatch x
+- transactions x
+- test for controllers
+- test for Transaction
+- test for relation in responses
+- docker setup
+- documentation  x
+- postman collection x

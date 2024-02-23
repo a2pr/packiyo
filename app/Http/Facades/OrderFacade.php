@@ -30,6 +30,7 @@ class OrderFacade
 
             $data['products'] = $this->groupProductDetailsInRequest($data);
             $customer = Customer::find($data['customer_id']);
+            Log::info('hiiiii');
 
             if (empty($customer)) {
                 $this->throwMissingModelException('Customer');
